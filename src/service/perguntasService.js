@@ -5,9 +5,9 @@ async function novasPerguntas(perguntas) {
     let novasPerg = [];
 
     for (let perg in perguntas) {
-        novasPerg.push([perguntas[perg].id, perguntas[perg].pergunta]);
+        novasPerg.push([perguntas[perg].pergunta]);
     }
-    const sqlQuery = `INSERT INTO perguntador_automatico.perguntas (id, pergunta) VALUES ?`
+    const sqlQuery = `INSERT INTO perguntador_automatico.perguntas (pergunta) VALUES ?`
     db.query(sqlQuery, [novasPerg], (err, result, fields) => {
         if (err) {
             console.log('SELECT ERROR: ', err);

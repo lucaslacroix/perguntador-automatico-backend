@@ -3,6 +3,7 @@ const db = require('./connect.js');
 const meli = require('./models/MercadoLivreModel.js');
 
 //const perguntadoresService = require('./service/perguntadoresService.js');
+const perguntasService = require('./service/perguntasService');
 
 const enviarPergunta = require('./functions/perguntar.js');
 const novoPerguntador = require('./functions/perguntador.js');
@@ -38,6 +39,13 @@ routes.get('/totalPerguntasCadastradas', async (req, res) => {
         }
         res.status(200).send({...result[0]});
     });
+});
+
+routes.post('/perguntas', async (req, res) => {
+    console.log('REQUEST: ', req.body);
+    await perguntasService.novasPerguntas(req.body);
+
+    res.status(200).json(req.body);
 });
 
 routes.get('/perguntas', async (req, res) => {
