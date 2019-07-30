@@ -1,6 +1,6 @@
 const meli = require('../models/MercadoLivreModel.js');
 const db = require('../connect.js');
-const MAX_PERGUNTAS_POR_HORA = 10;
+const MAX_PERGUNTAS_POR_HORA = 5;
 let contador = 0;
 let intervalPerguntar;
 
@@ -89,7 +89,7 @@ async function perguntar(params) {
 
         console.log('RESULTADO: ', JSON.stringify(res));
 
-        inicializarPerguntas();
+        perguntar(params);
 
         return;
     } else {
