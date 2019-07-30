@@ -1,12 +1,12 @@
 const mysql = require('mysql');
 
 const db = mysql.createConnection({
-    protocol: 'http',
-    host: 'localhost',
-    port: '3306', 
-    user: 'root',
-    password: 'root',
-    database: 'wordpress'
+    protocol: process.env.DB_PROT,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT, 
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 });
 
 db.connect((err, args) => {

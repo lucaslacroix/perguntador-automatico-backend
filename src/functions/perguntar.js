@@ -5,7 +5,6 @@ let contador = 0;
 let intervalPerguntar;
 
 async function enviarPergunta(req, res) {
-    res.header("Access-Control-Allow-Origin", "*");
 
     console.log(req.query);
 

@@ -8,7 +8,6 @@ const enviarPergunta = require('./functions/perguntar.js');
 const novoPerguntador = require('./functions/perguntador.js');
 
 routes.get('/perguntadores', async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const sqlQuery = `SELECT * FROM perguntador_automatico.perguntadores`;
     db.query(sqlQuery, async (err, result, fields) => {
@@ -30,7 +29,6 @@ routes.get('/perguntadores', async (req, res) => {
 });
 
 routes.get('/totalPerguntasCadastradas', async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const sqlQuery = `SELECT COUNT(id) AS totalPerguntas FROM perguntador_automatico.perguntas`;
     db.query(sqlQuery, (err, result, fields) => {
@@ -43,7 +41,6 @@ routes.get('/totalPerguntasCadastradas', async (req, res) => {
 });
 
 routes.get('/perguntas', async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const sqlQuery = `SELECT * FROM perguntador_automatico.perguntas`;
     db.query(sqlQuery, (err, result, fields) => {
@@ -56,7 +53,6 @@ routes.get('/perguntas', async (req, res) => {
 });
 
 routes.get('/totalAnunciosCadastrados', async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const sqlQuery = `SELECT COUNT(user_id) AS totalAnuncios FROM perguntador_automatico.anuncios`;
     db.query(sqlQuery, (err, result, fields) => {
@@ -69,7 +65,6 @@ routes.get('/totalAnunciosCadastrados', async (req, res) => {
 });
 
 routes.get('/vendedores', async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const sqlQuery = `SELECT COUNT(user_id) AS totalAnuncios, nickname FROM perguntador_automatico.anuncios GROUP BY nickname`;
     db.query(sqlQuery, (err, result, fields) => {

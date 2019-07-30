@@ -3,7 +3,6 @@ const meli = require('../models/MercadoLivreModel.js');
 const perguntadoresService = require('../service/perguntadoresService.js');
 
 async function novoPerguntador (req, res) {
-    res.header("Access-Control-Allow-Origin", "*");
 
     const code = req && req.query.code ? req.query.code : null;
     const ml = new meli.MercadoLivre();
