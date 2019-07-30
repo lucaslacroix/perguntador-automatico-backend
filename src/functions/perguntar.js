@@ -11,6 +11,7 @@ async function enviarPergunta(req, res) {
     if (req.query && req.query.start == 'true') {
         intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
         console.log('INICIAR');
+        res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
     } else if(intervalPerguntar) {
         console.log('PARAR');
 
@@ -18,7 +19,6 @@ async function enviarPergunta(req, res) {
     }
  
     //console.log('INTERVAL: ', intervalPerguntar);
-    res.sendStatus(200);
 }
 
 function inicializarPerguntas() {
