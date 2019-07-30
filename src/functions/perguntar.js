@@ -14,6 +14,7 @@ async function enviarPergunta(req, res) {
         res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
     } else if(intervalPerguntar) {
         console.log('PARAR');
+        res.status(200).json({ "horaFim":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
 
         clearInterval(intervalPerguntar);
     }
