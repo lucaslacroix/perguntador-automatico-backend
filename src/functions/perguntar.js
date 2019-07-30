@@ -1,6 +1,6 @@
 const meli = require('../models/MercadoLivreModel.js');
 const db = require('../connect.js');
-const MAX_PERGUNTAS_POR_HORA = 2;
+const MAX_PERGUNTAS_POR_HORA = 10;
 let contador = 0;
 let intervalPerguntar;
 
@@ -9,15 +9,15 @@ async function enviarPergunta(req, res) {
     console.log(req.query);
 
     if (req.query && req.query.start == 'true') {
-        intervalPerguntar = setInterval(inicializarPerguntas, 60000);
-        console.log('PERGUNTAR');
+        intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
+        console.log('INICIAR');
     } else if(intervalPerguntar) {
-        console.log('LIMPAR INTERVAL: ', intervalPerguntar);
+        console.log('PARAR');
 
         clearInterval(intervalPerguntar);
     }
  
-    console.log('INTERVAL: ', intervalPerguntar);
+    //console.log('INTERVAL: ', intervalPerguntar);
     res.sendStatus(200);
 }
 
@@ -65,16 +65,17 @@ function selectPerguntas(objInformacoes) {
 
 async function perguntar(params) {
     if (contador <= MAX_PERGUNTAS_POR_HORA) {
-        console.log('PERGUNTAR');
         contador = contador + 1;
-
+        
         const { perguntadores: perguntador, anuncios: anuncio, perguntas: pergunta } = getPilhaPergunta(params);
-
+        
         if (!perguntador || !anuncio || !pergunta) {
             perguntar(params);
             return;
         }
 
+        console.log('PERGUNTAR');
+        
         const body = {
             "text": pergunta.pergunta,
             "item_id": anuncio.anuncio_id
@@ -82,6 +83,11 @@ async function perguntar(params) {
 
         const ml = new meli.MercadoLivre(perguntador.access_token, perguntador.refresh_token);
         const res = await ml.post(`/questions/${anuncio.anuncio_id}`, body);
+        if(res.error){
+            contador = contador - 1;
+        }
+
+        console.log('RESULTADO: ', JSON.stringify(res));
 
         inicializarPerguntas();
 
@@ -91,7 +97,6 @@ async function perguntar(params) {
         contador = 0;
         return;
     }
-    //console.log('RESULTADO: ',res);
 }
 
 function separaInformacoesDoSelect(result) {
