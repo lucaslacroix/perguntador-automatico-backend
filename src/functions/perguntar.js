@@ -1,6 +1,6 @@
 const meli = require('../models/MercadoLivreModel.js');
 const db = require('../connect.js');
-const MAX_PERGUNTAS_POR_HORA = 2;
+const MAX_PERGUNTAS_POR_HORA = 10;
 let contador = 0;
 let intervalPerguntar;
 
@@ -10,7 +10,7 @@ async function enviarPergunta(req, res) {
 
     if (req.query && req.query.start == 'true') {
         inicializarPerguntas();
-        intervalPerguntar = setInterval(inicializarPerguntas, 1800000);
+        intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
         console.log('INICIAR');
         res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
     } else if(intervalPerguntar) {
