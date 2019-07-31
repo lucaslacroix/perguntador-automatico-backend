@@ -1,16 +1,16 @@
 const meli = require('../models/MercadoLivreModel.js');
 const db = require('../connect.js');
-const MAX_PERGUNTAS_POR_HORA = 5;
+const MAX_PERGUNTAS_POR_HORA = 2;
 let contador = 0;
 let intervalPerguntar;
 
 async function enviarPergunta(req, res) {
 
-    console.log(req.query);
+    //log.Debug(req.query);
 
     if (req.query && req.query.start == 'true') {
         inicializarPerguntas();
-        intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
+        intervalPerguntar = setInterval(inicializarPerguntas, 1800000);
         console.log('INICIAR');
         res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
     } else if(intervalPerguntar) {
@@ -76,7 +76,7 @@ async function perguntar(params) {
             return;
         }
 
-        console.log('PERGUNTAR');
+        console.info('PERGUNTAR PARA: ', JSON.stringify({perguntador, anuncio, pergunta}));
         
         const body = {
             "text": pergunta.pergunta,
@@ -85,11 +85,14 @@ async function perguntar(params) {
 
         const ml = new meli.MercadoLivre(perguntador.access_token, perguntador.refresh_token);
         const res = await ml.post(`/questions/${anuncio.anuncio_id}`, body);
-        if(res.error){
+        console.log('RESULTADO: ', JSON.stringify(res));
+        if(res && res.error){
             contador = contador - 1;
+            console.log('ERRO!');
+        } else {
+            console.log('PERGUNTOU!');
         }
 
-        console.log('RESULTADO: ', JSON.stringify(res));
 
         perguntar(params);
 
