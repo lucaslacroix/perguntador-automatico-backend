@@ -9,6 +9,7 @@ async function enviarPergunta(req, res) {
     console.log(req.query);
 
     if (req.query && req.query.start == 'true') {
+        inicializarPerguntas();
         intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
         console.log('INICIAR');
         res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
