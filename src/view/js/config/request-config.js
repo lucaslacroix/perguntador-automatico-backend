@@ -1,3 +1,3 @@
 export const config = {
-    url: 'http://localhost:3000',
+    url: 'http://www.meuranking.com.br:3000/',
 }
