@@ -142,7 +142,7 @@ class MercadoLivre {
             }
             return result;
         } catch (err) {
-            if (err.message === 'expired_token') {
+            if (err.message === 'expired_token' || err.message === 'invalid_token') {
                 const refreshed = await this.refreshAccessToken();
                 if (!refreshed.error) {
                     await this.post(path, body, params);
@@ -167,9 +167,14 @@ class MercadoLivre {
 
             const result = await res.json();
 
+            if(result.error){
+                throw result; 
+            }
+
             return result;
         } catch (err) {
-            if (err.message === 'expired_token') {
+            if (err.message === 'expired_token' || err.message === 'invalid_token') {
+                console.log('REFRESCAR')
                 const refreshed = await this.refreshAccessToken();
                 if (!refreshed.error) {
                     await this.get(path, params);

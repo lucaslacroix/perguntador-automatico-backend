@@ -1,0 +1,18 @@
+.custom-list{
+    padding: 0;
+    margin: 15px 0;
+    list-style: none;
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
+    li{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e3e6f0;
+        p {
+            margin: 0;
+        }
+    }
+}

@@ -5,12 +5,14 @@ const vendedoresService = require('../service/vendedoresService');
 
 async function novoVendedor (req, res) {
     try {
-        let getAnunciosUrl = `https://api.mercadolibre.com/sites/MLB/search?nickname=${req.body.nickname}`;
+        console.log(req.body);
+
+        let getAnunciosUrl = `https://api.mercadolibre.com/sites/MLB/search?nickname=${req.body.nickname}&limit=10`;
         let request = await fetch(getAnunciosUrl);
         let requestAnuncios = await request.json();
-        //console.log(requestAnuncios);
+        console.log(requestAnuncios);
         if(requestAnuncios.results && requestAnuncios.results.length <= 0){
-            throw {message: 'Este usuário não existe ou possui anúncios!'};
+            throw {error: 'USR_NOT_FOUND', message: 'Este usuário não existe ou não possui anúncios!'};
         } else if(requestAnuncios.error) {
             throw requestAnuncios.error;
         }

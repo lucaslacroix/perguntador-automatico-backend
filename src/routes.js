@@ -2,8 +2,10 @@ const routes = require('express').Router();
 const db = require('./connect.js');
 const meli = require('./models/MercadoLivreModel.js');
 
+require('dotenv').config();
 //const perguntadoresService = require('./service/perguntadoresService.js');
 const perguntasService = require('./service/perguntasService');
+const contaService = require('./service/contaService');
 
 const enviarPergunta = require('./functions/perguntar.js');
 const novoPerguntador = require('./functions/perguntador.js');
@@ -29,8 +31,11 @@ routes.get('/perguntadores', async (req, res) => {
         let resultArr = [];
 
         for(let i in result){
+
             const ml = new meli.MercadoLivre(result[i].access_token, result[i].refresh_token);
+            //console.log(ml._parameters);
             const user = await ml.get('/users/me');
+            //console.log(user) 
             const {nickname} = user;
             resultArr.push({ id: result[i].id, nickname })
         }
@@ -87,6 +92,17 @@ routes.get('/vendedores', async (req, res) => {
     });
 });
 
+routes.get('/conta', async (req, res) => {
+
+    const sqlQuery = `SELECT * FROM perguntador_automatico.conta WHERE id_conta = ${process.env.ID_CONTA}`;
+    db.query(sqlQuery, (err, result, fields) => {
+        if (err) {
+            console.log('SELECT ERROR: ', JSON.stringify(err));
+            res.sendStatus(500);
+        }
+        res.status(200).send(result);
+    });
+});
 routes.get('/novo_usuario?:code', novoPerguntador);
 
 routes.get('/perguntar?:start', enviarPergunta);
@@ -100,7 +116,9 @@ routes.get('/testarRefreshToken', async (req, res) => {
 });
 
 routes.get('/', async (req, res) => {
-    res.sendStatus(200);
+    res.sendFile('index.html', {
+        root: `${__dirname}/view/`
+    });
 });
 
 module.exports = routes;

@@ -1,21 +1,53 @@
 const meli = require('../models/MercadoLivreModel.js');
 const db = require('../connect.js');
+const contaService = require('../service/contaService.js');
+
 const MAX_PERGUNTAS_POR_HORA = 10;
 let contador = 0;
+let contadorSucessos = 0;
+let contadorErros = 0;
+let horaStatusModificado;
+let status;
+let ultimoEnvio;
+let proximoEnvio;
 let intervalPerguntar;
+
+function incrementaHorasNaData(horas){
+    let data = new Date();
+    data.setHours(data.getHours() + 1);
+    return data = data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR')
+}
 
 async function enviarPergunta(req, res) {
 
     //log.Debug(req.query);
 
     if (req.query && req.query.start == 'true') {
-        inicializarPerguntas();
         intervalPerguntar = setInterval(inicializarPerguntas, 3600000);
         console.log('INICIAR');
-        res.status(200).json({ "horaInicio":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
+
+        horaStatusModificado = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
+
+        proximoEnvio = incrementaHorasNaData(1);
+
+        contaService.updateConta({
+            proximo_envio: proximoEnvio,
+            alteracao_status: horaStatusModificado,
+            status: 1,
+        })
+
+        res.status(200).json({ "horaInicio": horaStatusModificado, "proximoEnvio": proximoEnvio, "status": "ATIVO" });
     } else if(intervalPerguntar) {
+
         console.log('PARAR');
-        res.status(200).json({ "horaFim":new Date().toLocaleDateString('pt-BR') + ' - ' + new Date().toLocaleTimeString('pt-BR')});
+
+        horaStatusModificado = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
+
+        contaService.updateConta({
+            alteracao_status: horaStatusModificado,
+            status: 0,
+        })
+        res.status(200).json({ "horaFim":new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')});
 
         clearInterval(intervalPerguntar);
     }
@@ -88,11 +120,19 @@ async function perguntar(params) {
         console.log('RESULTADO: ', JSON.stringify(res));
         if(res && res.error){
             contador = contador - 1;
+
+            contadorErros = contadorErros + 1;
+
             console.log('ERRO!');
         } else {
+
             console.log('PERGUNTOU!');
+            
+            contadorSucessos = contadorSucessos + 1;
         }
 
+        
+        ultimoEnvio = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
 
         perguntar(params);
 
@@ -100,6 +140,17 @@ async function perguntar(params) {
     } else {
         console.log('PARAR DE PERGUNTAR', new Date().toLocaleTimeString('pt-BR'));
         contador = 0;
+
+        proximoEnvio = incrementaHorasNaData(1);
+        
+        contaService.updateConta({
+            ultimo_envio: ultimoEnvio,
+            proximo_envio: proximoEnvio,
+            numero_envios: contadorSucessos,
+            numero_erros: contadorErros,
+            status: 1,
+        })
+
         return;
     }
 }
